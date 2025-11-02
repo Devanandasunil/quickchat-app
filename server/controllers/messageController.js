@@ -3,6 +3,16 @@ import User from "../models/User.js";
 import cloudinary from "../lib/cloudinary.js";
 import { io, userSocketMap } from "../server.js";
 
+// Mock io and userSocketMap for production
+const mockIo = {
+    to: () => ({ emit: () => { } }),
+    emit: () => { }
+};
+const mockUserSocketMap = {};
+
+const effectiveIo = io || mockIo;
+const effectiveUserSocketMap = userSocketMap || mockUserSocketMap;
+
 // Get all users except the logged in user
 export const getUserForSidebar = async (req, res) => {
     try {
@@ -71,9 +81,9 @@ export const sendMessage = async (req, res) => {
         const newMessage = await Message.create({ senderId, receiverId, text, image: imageUrl });
 
         // Emit the new message to the receiver if online
-        const receiverSocketId = userSocketMap[receiverId];
+        const receiverSocketId = effectiveUserSocketMap[receiverId];
         if (receiverSocketId) {
-            io.to(receiverSocketId).emit("newMessage", newMessage);
+            effectiveIo.to(receiverSocketId).emit("newMessage", newMessage);
         }
 
         res.json({ success: true, message: newMessage });
