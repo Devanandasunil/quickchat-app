@@ -2,9 +2,8 @@ services:
   - name: client
     type: web
     staticSite: true
-    rootDir: client
-    buildCommand: npm install && npm run build
-    publishDir: dist
+    buildCommand: cd client && npm install && npm run build
+    publishDir: client/dist
     envVars:
       - key: NODE_ENV
         value: production
