@@ -1,0 +1,17 @@
+services:
+  - name: client
+    type: web
+    staticSite: true
+    buildCommand: cd client && npm install && npm run build
+    publishDir: client/dist
+    envVars:
+      - key: NODE_ENV
+        value: production
+
+  - name: server
+    type: web
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
